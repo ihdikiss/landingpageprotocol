@@ -40,6 +40,18 @@ const App = () => {
           0%, 100% { box-shadow: 0 0 10px rgba(0, 255, 255, 0.1); }
           50% { box-shadow: 0 0 25px rgba(0, 255, 255, 0.4); }
         }
+        @keyframes spin-slow {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        @keyframes flicker {
+          0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% { opacity: 1; }
+          20%, 21.999%, 63%, 63.999%, 65%, 69.999% { opacity: 0.4; }
+        }
+        @keyframes glow-orange {
+          0%, 100% { text-shadow: 0 0 5px rgba(255, 68, 0, 0.5); }
+          50% { text-shadow: 0 0 15px rgba(255, 68, 0, 0.8), 0 0 20px rgba(255, 68, 0, 0.4); }
+        }
         .target-bracket {
           position: absolute;
           width: 8px;
@@ -52,6 +64,17 @@ const App = () => {
           opacity: 1;
           width: 12px;
           height: 12px;
+        }
+        .explore-btn::before {
+          content: '';
+          position: absolute;
+          top: 0; left: 0; width: 100%; height: 100%;
+          background: linear-gradient(45deg, transparent, rgba(255, 68, 0, 0.1), transparent);
+          transform: translateX(-100%);
+          transition: 0.6s;
+        }
+        .explore-btn:hover::before {
+          transform: translateX(100%);
         }
       </style>
 
@@ -77,45 +100,51 @@ const App = () => {
         <!-- مساحة فارغة للمركبة -->
         <div className="flex-grow"></div>
 
-        <!-- قسم الأزرار (أسفل المركبة) -->
-        <div className="flex flex-col items-center gap-5 z-10 mb-16 relative">
-          <!-- حالة النظام المحدثة -->
-          <div className="absolute -top-8 flex flex-col items-center opacity-30 group-hover:opacity-100 transition-opacity">
-            <span className="text-[8px] font-mono tracking-[0.4em] text-cyan-300">SYSTEM STATUS: OPTIMAL</span>
-            <div className="w-16 h-[1px] bg-gradient-to-r from-transparent via-cyan-500/40 to-transparent mt-1"></div>
-          </div>
-
-          <!-- الزر بحجم متوسط معدل -->
+        <!-- قسم الأزرار المطور أسفل السفينة -->
+        <div className="flex flex-col items-center gap-6 z-10 mb-14 relative w-full max-w-xs">
+          
+          <!-- زر اللعب الآن (Cyan) -->
           <button
             onClick=${handleEnterProtocol}
-            className="group relative flex items-center justify-center px-12 py-3.5 overflow-hidden transition-all duration-500 rounded-sm bg-black/50 border border-cyan-500/20 hover:border-cyan-400 hover:bg-black/70 hover:scale-105 active:scale-95 animate-[pulse-glow_4s_infinite]"
+            className="group relative w-full flex items-center justify-center px-8 py-3.5 overflow-hidden transition-all duration-500 rounded-sm bg-black/60 border border-cyan-500/20 hover:border-cyan-400 hover:bg-black/80 hover:scale-105 active:scale-95 animate-[pulse-glow_4s_infinite]"
           >
-            <!-- أقواس استهداف مصغرة -->
             <div className="target-bracket top-1.5 left-1.5 border-t-2 border-l-2"></div>
             <div className="target-bracket top-1.5 right-1.5 border-t-2 border-r-2"></div>
             <div className="target-bracket bottom-1.5 left-1.5 border-b-2 border-l-2"></div>
             <div className="target-bracket bottom-1.5 right-1.5 border-b-2 border-r-2"></div>
-
-            <!-- خط المسح -->
             <div className="absolute left-0 w-full h-[1px] bg-cyan-400/30 blur-[1px] animate-[scan_3s_infinite] pointer-events-none"></div>
-
             <span className="relative text-lg md:text-xl font-black tracking-[0.5em] text-white uppercase drop-shadow-[0_0_8px_rgba(34,211,238,0.4)]">
               اللعب الآن
             </span>
-
-            <!-- تأثير Shimmer -->
-            <div className="absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent group-hover:animate-[shimmer_2s_infinite]"></div>
           </button>
           
-          <button 
-            onClick=${toggleCard}
-            className="text-[10px] font-bold tracking-[0.3em] text-blue-400/80 hover:text-cyan-200 transition-colors uppercase border-b border-blue-500/10 pb-0.5 hover:border-cyan-400/40"
-          >
-            استكشف عالمنا
-          </button>
+          <!-- زر استكشف عالمنا المطور (Neon Orange) -->
+          <div className="relative group/explore w-full flex flex-col items-center">
+            <button 
+              onClick=${toggleCard}
+              className="explore-btn relative flex items-center justify-center gap-3 px-6 py-2.5 transition-all duration-500 rounded-full border border-orange-500/20 hover:border-orange-400/60 hover:bg-orange-950/20 group-hover/explore:px-12 group-hover/explore:shadow-[0_0_20px_rgba(255,102,0,0.15)]"
+            >
+              <!-- أيقونة المسح المداري البرتقالية -->
+              <div className="relative w-4 h-4 hidden group-hover/explore:block">
+                <div className="absolute inset-0 border-2 border-orange-400/30 border-t-orange-500 rounded-full animate-[spin-slow_1s_infinite]"></div>
+              </div>
+
+              <span className="text-[12px] font-black tracking-[0.45em] text-orange-500/90 group-hover/explore:text-orange-400 transition-all uppercase animate-[glow-orange_3s_infinite]">
+                استكشف عالمنا
+              </span>
+
+              <!-- إحداثيات وهمية برتقالية -->
+              <div className="absolute -left-20 opacity-0 group-hover/explore:opacity-60 transition-all duration-700 pointer-events-none translate-x-4 group-hover/explore:translate-x-0">
+                <span className="font-mono text-[7px] text-orange-500/80 tracking-widest">OBJ_ID: WORLD_B</span>
+              </div>
+            </button>
+            
+            <!-- خط الربط التقني البرتقالي -->
+            <div className="w-px h-6 bg-gradient-to-b from-orange-500/0 via-orange-500/30 to-transparent mt-1 group-hover/explore:h-10 transition-all duration-500"></div>
+          </div>
         </div>
 
-        <!-- عداد المسافرين في الأسفل تماماً -->
+        <!-- عداد المسافرين -->
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20">
           <div className="px-3 py-1 glassmorphism rounded-full flex items-center gap-2 border border-white/5">
             <div className="relative">
@@ -132,11 +161,11 @@ const App = () => {
 
       ${isCardOpen && html`
         <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/98 backdrop-blur-2xl transition-all duration-500" onClick=${toggleCard}>
-          <div className="relative max-w-sm w-full glassmorphism p-8 rounded-xl text-center space-y-6 border-cyan-500/20 shadow-[0_0_80px_rgba(0,255,255,0.1)]" onClick=${e => e.stopPropagation()}>
+          <div className="relative max-w-sm w-full glassmorphism p-8 rounded-xl text-center space-y-6 border-orange-500/20 shadow-[0_0_100px_rgba(255,102,0,0.1)]" onClick=${e => e.stopPropagation()}>
             <div className="space-y-3">
-              <div className="inline-block px-2 py-0.5 rounded-full border border-cyan-500/20 text-[8px] font-bold text-cyan-400 uppercase tracking-widest mb-1">mission profile</div>
+              <div className="inline-block px-2 py-0.5 rounded-full border border-orange-500/30 text-[8px] font-bold text-orange-400 uppercase tracking-widest mb-1">mission profile</div>
               <h3 className="text-3xl font-black text-white tracking-tight">مهمتنا</h3>
-              <p className="text-blue-100/60 text-sm leading-relaxed font-medium">
+              <p className="text-orange-100/60 text-sm leading-relaxed font-medium">
                 نحن هنا لنكسر قيود التعليم التقليدي. نحول كل تمرين ممل إلى رحلة مشوقة. تواصل معنا لنبدأ المغامرة.
               </p>
             </div>
@@ -161,7 +190,7 @@ const App = () => {
               </a>
             </div>
 
-            <button onClick=${toggleCard} className="text-[8px] text-white/20 uppercase tracking-[0.4em] font-bold pt-4 hover:text-cyan-400 transition-colors">Abort Mission</button>
+            <button onClick=${toggleCard} className="text-[8px] text-white/20 uppercase tracking-[0.4em] font-bold pt-4 hover:text-orange-400 transition-colors">Abort Mission</button>
           </div>
         </div>
       `}
